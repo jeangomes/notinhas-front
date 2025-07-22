@@ -1,0 +1,11 @@
+services:
+  quasar-notinhas-app:
+    build: .
+    container_name: quasar_notinhas
+    volumes:
+      - .:/app
+    ports:
+      - "8087:8087"
+    restart: "no"
+    stdin_open: true
+    tty: true
