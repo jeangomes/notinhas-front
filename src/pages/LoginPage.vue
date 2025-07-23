@@ -183,14 +183,14 @@ async function handleLogin(): Promise<void> {
 
 async function checkAuthStatus(): Promise<void> {
   if (store.authenticated) {
-    await router.push('/clientes')
+    await router.push('/dashboard')
     return
   }
 
   try {
     await store.getAuthUser()
     if (store.authUser) {
-      await router.push('/clientes')
+      await router.push('/dashboard')
     }
   } catch (error) {
     console.log(error);
