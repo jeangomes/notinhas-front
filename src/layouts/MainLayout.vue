@@ -43,6 +43,57 @@
         <q-item-label header> Essential Links </q-item-label>
 
         <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
+        <q-item
+          :to="{name: 'purchases'}"
+        >
+          <q-item-section
+            avatar
+          >
+            <q-icon name="money" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Compras</q-item-label>
+            <q-item-label caption>Listagem</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item
+          :to="{name: 'newPurchase'}"
+        >
+          <q-item-section
+            avatar
+          >
+            <q-icon name="money" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Cadastrar Compra</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item
+          :to="{name: 'purchaseItems'}"
+        >
+          <q-item-section
+            avatar
+          >
+            <q-icon name="money" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Lista items</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item href="https://consultadfe.fazenda.rj.gov.br/consultaDFe/paginas/consultaChaveAcesso.faces" target="_blank">
+          <q-item-label>Consulta NFCE</q-item-label>
+        </q-item>
+        <q-item v-for="n in rows" :key="n.id">
+          <q-item-section>
+            <q-item-label>content: {{n.content}}</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-btn @click="copyValueToClipboard(n.id)" class="float-right" dense size="10px" color="blue-grey-3" outline icon="content_copy"/>
+          </q-item-section>
+          <q-item-section side>
+            <q-btn @click="deleteContent(n.id)" class="float-right" dense size="10px" color="negative" outline icon="delete"/>
+          </q-item-section>
+        </q-item>
       </q-list>
       <pre>{{user}}</pre>
       <q-separator/>
@@ -56,10 +107,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue'
 import { useAuthStore } from 'stores/myAuth';
 import { useQuasar } from 'quasar';
+import useCopyToClipboardNotify from 'src/services/UseCopyToClipboardNotify'
+import { api } from 'boot/axios'
 
 const linksList: EssentialLinkProps[] = [
   {
@@ -71,6 +124,7 @@ const linksList: EssentialLinkProps[] = [
 ];
 
 const leftDrawerOpen = ref(false);
+const { copyValueToClipboard } = useCopyToClipboardNotify()
 const store = useAuthStore()
 const $q = useQuasar()
 
@@ -91,4 +145,55 @@ function logout () {
     store.logoutApi()
   })
 }
+// Define interface for the row data
+interface NfceItem {
+  id: number
+  content: string
+  // Add other properties as needed
+}
+
+// Reactive references with proper typing
+const rows = ref<NfceItem[]>([])
+const loading = ref<boolean>(false)
+
+// Function to fetch data with proper error handling
+const onRequest = async (): Promise<void> => {
+  try {
+    loading.value = true
+    const response = await api.get<NfceItem[]>('/nfce-key-or-url')
+    rows.value = response.data
+  } catch (error) {
+    console.error('Error fetching NFCE data:', error)
+    // Handle error appropriately (show notification, etc.)
+  } finally {
+    loading.value = false
+  }
+}
+// const rows = ref([])
+// const onRequest = () => {
+//   api.get('/nfce-key-or-url').then((response) => {
+//     rows.value = response.data
+//   })
+// }
+// const deleteContent = (id) => {
+//   api.delete('/nfce-key-or-url/' + id).then(() => {
+//     onRequest()
+//   })
+// }
+// Function to delete content with proper typing and error handling
+const deleteContent = async (id: number): Promise<void> => {
+  try {
+    loading.value = true
+    await api.delete(`/nfce-key-or-url/${id}`)
+    await onRequest() // Refresh the list
+  } catch (error) {
+    console.error('Error deleting content:', error)
+    // Handle error appropriately (show notification, etc.)
+  } finally {
+    loading.value = false
+  }
+}
+onMounted(() => {
+  void onRequest()
+})
 </script>

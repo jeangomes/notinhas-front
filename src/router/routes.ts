@@ -18,6 +18,24 @@ const routes: RouteRecordRaw[] = [
         path: '/login',
         name: 'login',
         component: () => import('pages/LoginPage.vue')
+      },
+      {
+        path: '/purchases',
+        name: 'purchases',
+        component: () => import('pages/purchases/PageIndex.vue'),
+        meta: { auth: true }
+      },
+      {
+        path: '/new-purchase',
+        name: 'newPurchase',
+        component: () => import('pages/purchases/PageForm.vue'),
+        meta: { auth: true }
+      },
+      {
+        path: '/purchase-items',
+        name: 'purchaseItems',
+        component: () => import('pages/purchases/PurchaseItems.vue'),
+        meta: { auth: true }
       }
       // {
       //   path: '/abacate',

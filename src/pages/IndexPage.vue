@@ -6,6 +6,21 @@
       :todos="todos"
       :meta="meta"
     ></example-component>
+    <div class="row">
+      <br>
+      <q-input outlined bottom-slots v-model="percentual" label="Quanto é">
+        <template v-slot:append>
+          %
+        </template>
+      </q-input>
+      <q-input outlined bottom-slots v-model="valueInput" label="de">
+        <template v-slot:after>
+          <q-btn round dense flat icon="send" @click="calculate1()" />
+        </template>
+      </q-input>
+      <br>
+      <h4>{{result}}</h4>
+    </div>
   </q-page>
 </template>
 
@@ -40,4 +55,21 @@ const todos = ref<Todo[]>([
 const meta = ref<Meta>({
   totalCount: 1200,
 });
+
+const percentual = ref<string>('')
+const valueInput = ref<string>('')
+const result = ref<number>(0)
+
+function calculate1 (): void {
+  const percentualNum = parseFloat(percentual.value)
+  const valueNum = parseFloat(valueInput.value)
+
+  // Validation to ensure both values are valid numbers
+  if (isNaN(percentualNum) || isNaN(valueNum)) {
+    result.value = 0
+    return
+  }
+
+  result.value = (percentualNum / 100) * valueNum
+}
 </script>
