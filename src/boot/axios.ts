@@ -20,8 +20,6 @@ if (process.env.PROD) {
   url = process.env.API + '/api'
 }
 const api = axios.create({ baseURL: url })
-axios.defaults.withCredentials = true
-axios.defaults.withXSRFToken = true
 
 export default defineBoot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
@@ -34,5 +32,6 @@ export default defineBoot(({ app }) => {
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
 });
-
+api.defaults.withCredentials = true
+api.defaults.withXSRFToken = true
 export { api };
