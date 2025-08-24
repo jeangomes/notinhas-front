@@ -20,72 +20,6 @@ const pagination = ref<QTableProps['pagination']>({
   rowsPerPage: 3,
   rowsNumber: 10
 })
-// const filter = ref({ date: '', store: '' })
-// const loading = ref(false)
-// const pagination = ref({
-//   sortBy: 'desc',
-//   descending: false,
-//   page: 1,
-//   rowsPerPage: 3,
-//   rowsNumber: 10
-// })
-
-// const name: string = 'Felipe'
-// name = 23
-
-const sum = (v1: number, v2: number): number => {
-  return v1 + v2
-}
-
-const total = sum(72, 2)
-console.log(total)
-
-// enum Gender {
-//   Male = 'male',
-//   Female = 'female',
-// }
-//
-// enum Roles {
-//   Admin,
-//   NormalUser
-// }
-
-// type User = {
-//   firstName: string
-//   lastName: string
-//   name: string
-//   age: number
-//   gender: Gender
-//   roles: Array<Roles>
-//   hairColor?: string
-// }
-
-// const fullName = (user: User): string => {
-//   return `${user.firstName} ${user.lastName} (${user.gender})`
-// }
-
-// console.log(fullName('Jean Gomes'))
-// console.log(fullName({ firstName: 'Jean', lastName: 'Gomes', name: 'sa', age: 7, gender: Gender.Male, roles: [Roles.Admin] }))
-
-// const users: Array<User> = [
-//   {
-//     firstName: '456',
-//     lastName: 'Maria',
-//     name: 'juca',
-//     age: 35,
-//     gender: Gender.Male,
-//     roles: [Roles.NormalUser]
-//   },
-//   {
-//     firstName: '456',
-//     lastName: 'Julia',
-//     name: 'juca',
-//     age: 35,
-//     gender: Gender.Male,
-//     roles: [Roles.NormalUser]
-//   }
-// ]
-// console.log(users)
 
 // Interfaces for type safety
 interface Purchase {
@@ -104,14 +38,6 @@ interface FilterData {
   date: string
   store: string
 }
-
-// interface PaginationData {
-//   sortBy: string
-//   descending: boolean
-//   page: number
-//   rowsPerPage: number
-//   rowsNumber: number
-// }
 
 interface ApiPaginatedResponse {
   data: Purchase[]
@@ -175,25 +101,6 @@ const columns: QTableColumn<Purchase>[] = [
   }
 ]
 
-// const onRequest = (props: RequestProps) => {
-//   const { page } = props.pagination // rowsPerPage, sortBy, descending
-//   const filter = props.filter
-//
-//   loading.value = true
-//   // console.log(filter.date)
-//   // console.log(filter.store)
-//   api.get(`/purchase?page=${page}&filter=${filter.date}&filter2=${filter.store}`).then((response) => {
-//     rows.value = response.data.data
-//
-//     pagination.value.page = response.data.current_page
-//     pagination.value.rowsPerPage = response.data.per_page
-//     pagination.value.rowsNumber = response.data.total
-//     loading.value = false
-//   }).catch((error) => {
-//     console.error('Check failed:', error)
-//   })
-// }
-// Server request function with proper typing and error handling
 const onRequest = async (props: {
   pagination: {
     page: number
@@ -207,19 +114,28 @@ const onRequest = async (props: {
     loading.value = true
     const { page } = props.pagination
     const filterData = props.filter
-
-    const response = await api.get<ApiPaginatedResponse>(
-      `/purchase?page=${page}&filter=${filterData?.date}&filter2=${filterData?.store}`
-    )
-
-    rows.value = response.data.data
-    pagination.value = {
-      ...props.pagination,
-      rowsNumber: response.data.total
+    let makeRequest = true
+    if (filterData && filterData.date) {
+      const date = new Date(filterData.date);
+      const year = date.getFullYear();
+      if (year < 1990) {
+        makeRequest = false
+      }
     }
-    pagination.value.page = response.data.current_page
-    pagination.value.rowsPerPage = response.data.per_page
-    pagination.value.rowsNumber = response.data.total
+    if (makeRequest) {
+      const response = await api.get<ApiPaginatedResponse>(
+        `/purchase?page=${page}&filter=${filterData?.date}&filter2=${filterData?.store}`
+      )
+
+      rows.value = response.data.data
+      pagination.value = {
+        ...props.pagination,
+        rowsNumber: response.data.total
+      }
+      pagination.value.page = response.data.current_page
+      pagination.value.rowsPerPage = response.data.per_page
+      pagination.value.rowsNumber = response.data.total
+    }
   } catch (error) {
     console.error('Error fetching purchases:', error)
     $q.notify({
