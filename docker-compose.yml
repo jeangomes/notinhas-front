@@ -5,7 +5,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - "8087:8087"
+      - "8080:8080"
     restart: "no"
     stdin_open: true
     tty: true

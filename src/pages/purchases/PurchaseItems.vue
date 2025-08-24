@@ -132,7 +132,7 @@ const onRequest = (props: {
   const filter = props.filter
 
   loading.value = true
-  api.get(`/purchase-items/?page=${page}&filter=${filter}`).then((response) => {
+  api.get(`/purchase-items?page=${page}&filter=${filter}`).then((response) => {
     rows.value = response.data.data
 
     pagination.value = {

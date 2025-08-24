@@ -8,7 +8,7 @@ WORKDIR /app
 RUN npm install -g @quasar/cli
 
 # Expõe a porta padrão do Quasar
-EXPOSE 8087
+EXPOSE 8080
 
 # Comando padrão para manter o contêiner rodando
 CMD ["sh"]

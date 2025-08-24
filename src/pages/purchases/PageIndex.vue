@@ -5,8 +5,10 @@ import { currencyFormat } from 'src/services/util'
 import PurchaseDetail from 'components/PurchaseDetail.vue'
 import type { QTableColumn, QTableProps} from 'quasar';
 import { useQuasar, QTable  } from 'quasar'
+import { useRoute } from 'vue-router'
 
 const $q = useQuasar()
+const route = useRoute()
 // const tableRef = ref()
 const tableRef = ref<QTable>()
 // const rows = ref([])
@@ -163,6 +165,9 @@ const deleteRecord = (id: number) => {
 }
 onMounted(() => {
   tableRef.value?.requestServerInteraction()
+  if (route.query && route.query.purchased_at) {
+    filter.value.date = route.query.purchased_at as string ?? ""
+  }
 })
 
 /* onMounted(() => {

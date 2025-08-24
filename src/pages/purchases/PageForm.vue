@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { api } from 'boot/axios';
 import { copyToClipboard, date, useQuasar } from 'quasar';
+import { useRouter } from 'vue-router'
 
 const purchase = ref({
   store: 'SACOLÃO (REDE QUALY)',
@@ -13,6 +14,8 @@ const purchase = ref({
   content: '',
   content_write: ''
 })
+
+const router = useRouter()
 
 const nfceKeyUrl = ref('')
 const $q = useQuasar()
@@ -70,13 +73,11 @@ const saveKey = () => {
 
 const sendData = () => {
   // console.log(purchase.value.content)
-  purchase.value.content_write = purchase.value.content.replace(/\n/g, '\r\n')
+  purchase.value.content_write = purchase.value.content.replace(/\n/g, '\r\n') // funciona no chrome
   api.post('/purchase', purchase.value).then((response) => {
-    console.log(response)
-    purchase.value.content = response.status + ''
-    setTimeout(() => {
-      console.log("Delayed for 1 second.")
-    }, 1000)
+    if (response.status === 201) {
+      void router.push({ name: 'purchases', query: { purchased_at: response.data.purchased_at } })
+    }
   }).catch((error) => {
       console.error('Auth check failed:', error)
     })

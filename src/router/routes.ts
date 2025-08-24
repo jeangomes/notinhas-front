@@ -36,7 +36,13 @@ const routes: RouteRecordRaw[] = [
         name: 'purchaseItems',
         component: () => import('pages/purchases/PurchaseItems.vue'),
         meta: { auth: true }
-      }
+      },
+      {
+        path: '/read-qrcode',
+        name: 'readQrCode',
+        component: () => import('pages/ReadQrCode.vue'),
+        meta: { auth: true }
+      },
       // {
       //   path: '/abacate',
       //   name: 'abacate',

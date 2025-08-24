@@ -55,7 +55,7 @@ export default defineConfig((ctx) => {
       env: {
         API: ctx.dev
           ? 'http://192.168.0.175:80'
-          : 'https://api.prsonline.com.br'
+          : ''
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
@@ -85,7 +85,7 @@ export default defineConfig((ctx) => {
     devServer: {
       // https: true,
       open: false, // opens browser window automatically
-      port: 8087,
+      port: 8080,
       proxy: {
         '/api': {
           target: 'http://192.168.0.175:80',
@@ -99,7 +99,7 @@ export default defineConfig((ctx) => {
       config: {},
 
       // iconSet: 'material-icons', // Quasar icon set
-      // lang: 'en-US', // Quasar language pack
+      lang: 'pt-BR', // Quasar language pack
 
       // For special cases outside of where the auto-import strategy can have an impact
       // (like functional components as one of the examples),
